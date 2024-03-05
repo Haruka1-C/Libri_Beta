@@ -30,7 +30,7 @@
         </div>
     </header>
 
-    <body>
+    <div>
         <div class="main-body-container">
             <div class="file-upload">
                 <form action="upload.php" method="POST" enctype="multipart/form-data">
@@ -40,9 +40,42 @@
             </div>
             <div class="file-download">
                 <h4>Download file: </h4>
-                <a href="download.php?Screenshot(1).png">Download</a>
+                <a href="download.php?file=<?php $file ?>">Download</a>
+                <!-- <a href="download.php?file=Screenshot (1).png">Download</a> -->
+            </div>
+            <div class="bookshelf">
+                <?php
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+                $dbname = "libri_db";
+
+                $conn = new mysqli($servername, $username, $password, $dbname);
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                $sql = "SELECT * FROM files_beta";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                    echo "<h2>Uploaded Files:</h2>";
+                    echo "<ul>";
+                    while ($row = $result->fetch_assoc()) {
+                        $filename = $row["filename"];
+                        $filepath = $row["filepath"];
+                        echo "<li><a href='download.php?file=" . urlencode($filename) . "'>$filename</a></li>";
+                    }
+                    echo "</ul>";
+                } else {
+                    echo "No files uploaded yet.";
+                }
+                
+                $conn->close();
+                ?>
+                
             </div>
         </div>
-    </body>
+    </div>
 </body>
 </html>
