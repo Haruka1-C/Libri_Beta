@@ -36,3 +36,4 @@ else {
     echo "File not uploaded.";
 }
 $conn->close();
+?>
