@@ -1,21 +1,45 @@
 <?php
 if(!empty($_GET["file"])) {
 
-    $filename = basename($_GET['file']);
-    $filepath = 'uploads/'.$filename;
-    if(!empty($filename) && file_exists($filepath)) {
+    $filename = isset($_GET["file"]) ? $_GET["file"] : null;
+    
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "libri_db";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+
+    $sql = "SELECT * FROM files_beta WHERE filename = '$filename'";
+    $result = $conn->query($sql);
+
+
+    if($result && $result->num_rows > 0) {
+
+        $row = $result->fetch_assoc();
+        $filepath = $row["filepath"];
         //Define Headers
         header("Cache-Control: public");
         header("Content-Description: File Transfer");
         header("Content-Disposition: attachment; filename=$filename");
-        header("content-Type: application/zip");
+        header("Content-Type: application/zip");
         header("Content-Transfer-Encoding: binary");
 
         readfile($filename);
         exit();
+    } else {
+        echo $filename;
+        echo "This file does not exists";  
     }
-}
-else {
-    echo "This file does not exists";
+    $conn->close();
+} else {
+    echo "No files specified";
 }
 ?>
+
+
+
